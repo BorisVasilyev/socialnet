@@ -1,0 +1,19 @@
+<?php
+
+	class User
+	{
+		public $Id;
+		public $Login;
+		public $Full_name;
+		public $Reg_date;
+		
+		function __construct($id, $login, $full_name, $reg_date)
+		{
+			$this->$Id = $id;
+			$Login = $login;
+			$Full_name = $full_name;
+			$Reg_date = $reg_date;
+		}
+	}
+
+?>

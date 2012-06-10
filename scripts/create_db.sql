@@ -10,7 +10,7 @@ create table users
 	full_name varchar(100),
 	reg_date datetime,
 	primary key(id)
-);
+) CHARACTER SET = cp1251;
 
 create table posts
 (
@@ -19,7 +19,7 @@ create table posts
 	club_id int,
 	title varchar(100),
 	text varchar(1000)
-);
+) CHARACTER SET = cp1251;
 
 create table comments
 (
@@ -28,14 +28,15 @@ create table comments
 	user_login varchar(100),
 	text varchar(1000),
 	parent_id int
-);
+) CHARACTER SET = cp1251;
 
 create table clubs
 (
-	id int,
+	id mediumint AUTO_INCREMENT,
 	name varchar(100),
-	description varchar(1000)
-);
+	description varchar(1000),
+	primary key(id)
+) CHARACTER SET = cp1251;
 
 create table subscriptions
 (

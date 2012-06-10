@@ -15,5 +15,19 @@
 			$this->Reg_date = $reg_date;
 		}
 	}
+	
+	class Club
+	{
+		public $Id;
+		public $Name;
+		public $Description;
+		
+		function __construct($id, $name, $description)
+		{
+			$this->Id = $id;
+			$this->Name = $name;
+			$this->Description = $description; 
+		}
+	}	
 
 ?>

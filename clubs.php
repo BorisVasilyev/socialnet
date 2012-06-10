@@ -2,7 +2,7 @@
 	if(isset($_POST['logout']))
 	{
 		setcookie("login", "", time() - 3600*24*30*12);
-      	setcookie("password", "", time() - 3600*24*30*12);
+      setcookie("password", "", time() - 3600*24*30*12);
 		header("Location: index.php");
 	}
 
@@ -13,21 +13,8 @@
 		$login = $_COOKIE['login'];
 		$password = $_COOKIE['password'];
 
-		unset($add_err);
-
 		if(DBManager::check_login($login, $password))
 		{
-			$subs_id = $_GET['subscribe'];
-			
-			if($subs_id != null)
-			{
-				$cur_user = DBManager::get_user($login);			
-				
-				if($cur_user->Id != $subs_id)
-					DBManager::add_subscribe($cur_user->Id, $subs_id);
-				else 
-					$add_err = true;
-			}
 		?>
 
 		<html>
@@ -53,27 +40,24 @@
 
 			echo '<div class="body"> <table>';		
 		
-			$users = DBManager::get_users();
+			$clubs = DBManager::get_clubs();
 		
-			foreach($users as $i => $value)
+			foreach($clubs as $i => $value)
 			{
-				echo '<tr><td> ' . ($i + 1) . '. </td><td><b>' . $value->Full_name . ' </b></td></tr>';
-				echo '<tr><td></td><td> Дата регистрации: ' . $value->Reg_date . ' </td></tr>';
-				echo '<tr><td></td><td> <a href = "users.php?subscribe=' . $value->Id . '"> Подписаться </a> </td></tr>';
-				echo '<tr><td></td><td><br></td></tr>';
+				echo '<tr><td> ' . ($i + 1) . '. </td><td><b>' . $value->Name . ' </b></td></tr>';
+				echo '<tr><td></td><td> ' . $value->Description. ' </td></tr>';
+				echo '<tr><td></td><td> <a href = "clubs.php?subscribe=' . $value->Id . '"> Подписаться </a> </td></tr>';
 			}	
 			
 			echo '</table>';
 			
-			if (isset($add_err)) echo '<font color=#ff0000> Нет смысла подписываться на самого себя </font>'; 
-			
-			echo '<form action = "main.php" method ="post"><input type="submit" name="logout" value="Выход"/></form>';
+			echo '<br><form action = "main.php" method ="post"><input type="submit" name="logout" value="Выход"/></form>';
 		}
 		else
 		{
 			setcookie("login", "", time() - 3600*24*30*12);
 
-        	setcookie("password", "", time() - 3600*24*30*12);
+        		setcookie("password", "", time() - 3600*24*30*12);
 
 			echo 'Необходима авторизация!';
 			?>

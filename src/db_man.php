@@ -174,8 +174,6 @@
 				$query = sprintf("select id, login, full_name, reg_date from ". self::$db_name . ".users");
 	
 				$result = mysql_query($query);
-				
-				$u = null;
 	
 				if(!$result)
 				{
@@ -203,7 +201,7 @@
 			return $users;
 		}
 		
-		public function add_subscribe($user_id, $subs_id)
+		public function add_user_subscription($user_id, $subs_id)
 		{
 			$link = mysql_connect(self::$db_host, self::$db_login, self::$db_password);
 		
@@ -213,13 +211,44 @@
 			}
 			else
 			{
-				$query = sprintf("insert into ". self::$db_name . ".subscriptions values('%s', '%s')",
+				$query = sprintf("insert into ". self::$db_name . ".user_subscriptions values('%s', '%s')",
 										mysql_real_escape_string($user_id),
 										mysql_real_escape_string($subs_id));
 	
 				$result = mysql_query($query);
-				
-				$u = null;
+	
+				if(!$result)
+				{
+					die('Query error: ' . mysql_error());
+				}
+				else 
+				{
+					$res = true;
+				}
+	
+				mysql_free_result($result);
+			}
+	
+			mysql_close($link);
+	
+			return $res;
+		}
+		
+		public function add_club_subscription($user_id, $subs_id)
+		{
+			$link = mysql_connect(self::$db_host, self::$db_login, self::$db_password);
+		
+			if(!$link)
+			{
+				die('Ошибка соединения: ' . mysql_error());
+			}
+			else
+			{
+				$query = sprintf("insert into ". self::$db_name . ".club_subscriptions values('%s', '%s')",
+										mysql_real_escape_string($user_id),
+										mysql_real_escape_string($subs_id));
+	
+				$result = mysql_query($query);
 	
 				if(!$result)
 				{
@@ -249,10 +278,10 @@
 			else
 			{
 				$query = sprintf("select id, name, description from ". self::$db_name . ".clubs");
+
+				mysql_query("SET NAMES utf8");	
 	
 				$result = mysql_query($query);
-				
-				$u = null;
 	
 				if(!$result)
 				{
@@ -277,6 +306,90 @@
 			mysql_close($link);
 	
 			return $clubs;
+		}
+	
+		public function get_publisher_clubs($user_id)
+		{
+			$link = mysql_connect(self::$db_host, self::$db_login, self::$db_password);
+		
+			if(!$link)
+			{
+				die('Ошибка соединения: ' . mysql_error());
+			}
+			else
+			{
+				$query = sprintf("select id, name, description from ". self::$db_name . ".clubs 
+										where id in (select club_id from ". self::$db_name .".club_subscriptions where subscriber_id = '%s')",
+										mysql_real_escape_string($user_id));
+
+				mysql_query("SET NAMES utf8");	
+	
+				$result = mysql_query($query);
+	
+				if(!$result)
+				{
+					die('Query error: ' . mysql_error());
+				}
+				else 
+				{
+					while($row = mysql_fetch_assoc($result))
+					{
+						$c = new Club($row['id'],
+									$row['name'], 
+									$row['description']);
+									
+						$clubs[] = $c;
+					}
+				}
+	
+				mysql_free_result($result);
+			}
+	
+			mysql_close($link);
+	
+			return $clubs;
+		}
+	
+		public function get_publisher_users($user_id)
+		{
+			$link = mysql_connect(self::$db_host, self::$db_login, self::$db_password);
+		
+			if(!$link)
+			{
+				die('Ошибка соединения: ' . mysql_error());
+			}
+			else
+			{
+				$query = sprintf("select id, login, full_name, reg_date from ". self::$db_name . ".users 
+										where id in (select publisher_id from " . self::$db_name . ".user_subscriptions where subscriber_id = '%s') ",
+										mysql_real_escape_string($user_id));
+	
+				$result = mysql_query($query);
+	
+				if(!$result)
+				{
+					die('Query error: ' . mysql_error());
+				}
+				else 
+				{
+					while($row = mysql_fetch_assoc($result))
+					{
+						$u = new User($row['id'], 
+									$row['login'], 
+									$row['full_name'],
+									$row['reg_date']);
+									
+						$users[] = $u;
+	
+					}
+				}
+	
+				mysql_free_result($result);
+			}
+	
+			mysql_close($link);
+	
+			return $users;
 		}
 	}
 ?>

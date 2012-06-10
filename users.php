@@ -24,7 +24,7 @@
 				$cur_user = DBManager::get_user($login);			
 				
 				if($cur_user->Id != $subs_id)
-					DBManager::add_subscribe($cur_user->Id, $subs_id);
+					DBManager::add_user_subscription($cur_user->Id, $subs_id);
 				else 
 					$add_err = true;
 			}
@@ -34,7 +34,7 @@
 		<head>
 			<title> Social Network </title>
 			<style type="text/css" media="all">
-		    		@import url(styles.css);
+		    		@import url(css/styles.css);
 		  	</style>
 		</head>
 		<body>		
@@ -51,7 +51,11 @@
 					<a href="users.php" class="menu_text"> Пользователи </a> 
 				</div>';
 
-			echo '<div class="body"> <table>';		
+			echo '<div class="body">';
+
+			echo '<h3> Зарегистрированные пользователи: </h3>';			
+			
+			echo '<table>';		
 		
 			$users = DBManager::get_users();
 		

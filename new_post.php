@@ -40,28 +40,8 @@
 				
 			$cur_user = DBManager::get_user($login);
 			
-			echo '<div class="body"> <h3> Добро пожаловать, ' . $cur_user->Full_name . '!</h3>';
+			echo '<div class="body">';
 
-			echo '<a href="new_post.php"> <b> Написать новый пост</b></a>';			
-			
-			$clubs = DBManager::get_publisher_clubs($cur_user->Id);		
-			
-			echo '<br><br> <b> Вы подписаны на следующие клубы: </b>';
-			
-			foreach($clubs as $i => $value)
-			{
-				echo '<br> '. ($i + 1) . '. <a href = "clubs.php?show=' . $value->Id . '">' . $value->Name . '</a>';
-			}	
-			
-			echo '<br><br> <b> Вы подписаны на следующих пользователей: </b> ';
-			
-			$users = DBManager::get_publisher_users($cur_user->Id);		
-			
-			foreach($users as $i => $value)
-			{
-				echo '<br> '. ($i + 1) . '. <a href = "users.php?show=' . $value->Id . '">' . $value->Full_name . '</a>';
-			}	
-			
 			echo '<br><br><form action = "main.php" method ="post"><input type="submit" name="logout" value="Выход"/></form>';
 		}
 		else

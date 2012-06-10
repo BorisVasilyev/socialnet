@@ -28,7 +28,7 @@
 <head>
 	<title> Social Network </title>
 	<style type="text/css" media="all">
-    		@import url(styles.css);
+    		@import url(css/styles.css);
   	</style>
 </head>
 <body>

@@ -61,6 +61,38 @@
 			{
 				echo '<br> '. ($i + 1) . '. <a href = "users.php?show=' . $value->Id . '">' . $value->Full_name . '</a>';
 			}	
+
+			echo '<br><br> <b> Новые посты: </b> ';			
+			
+			$posts = DBManager::get_posts($cur_user->Id);
+			
+			foreach($posts as $i => $value)
+			{
+				echo '<br><br><a href="post.php?show=' . $value->Id . '"><b>' . $value->Title . '</b></a><br><br>';
+				
+				echo $value->Text;
+				
+				echo '<br><br>';
+				
+				$user = DBManager::get_user_by_id($value->User_id);
+				
+				if(isset($user))
+				{
+					echo 'Написал <a href="users.php?show=' . $user->Id . '">' . $user->Full_name . '</a>';
+				}
+				
+				if(isset($value->Club_id))
+				{
+					$club = DBManager::get_club_by_id($value->Club_id);
+					
+					if(isset($club))
+					{
+						echo ' в блог клуба <a href="clubs.php?show=' . $club->Id . '">' . $club->Name . '</a>';
+					}
+				}
+				else 
+					echo ' в личный блог ';
+			}
 			
 			echo '<br><br><form action = "main.php" method ="post"><input type="submit" name="logout" value="Выход"/></form>';
 		}

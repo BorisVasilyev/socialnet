@@ -161,6 +161,49 @@
 			return $u;
 		}
 		
+		public function get_user_by_id($user_id)
+		{	
+			$link = mysql_connect(self::$db_host, self::$db_login, self::$db_password);
+		
+			if(!$link)
+			{
+				die('Ошибка соединения: ' . mysql_error());
+			}
+			else
+			{
+				$query = sprintf("select id, login, full_name, reg_date from ". self::$db_name . ".users 
+								where id = '%s'", 
+							mysql_real_escape_string($user_id));
+	
+				$result = mysql_query($query);
+				
+				$u = null;
+	
+				if(!$result)
+				{
+					die('Query error: ' . mysql_error());
+				}
+				else 
+				{
+					if($row = mysql_fetch_assoc($result))
+					{
+						$u = new User($row['id'], 
+									$row['login'], 
+									$row['full_name'],
+									$row['reg_date']);
+	
+					}
+				}
+	
+				mysql_free_result($result);
+			}
+	
+	
+			mysql_close($link);
+	
+			return $u;
+		}
+		
 		public function get_users()
 		{
 			$link = mysql_connect(self::$db_host, self::$db_login, self::$db_password);
@@ -307,6 +350,46 @@
 	
 			return $clubs;
 		}
+		
+		public function get_club_by_id($club_id)
+		{
+			$link = mysql_connect(self::$db_host, self::$db_login, self::$db_password);
+		
+			if(!$link)
+			{
+				die('Ошибка соединения: ' . mysql_error());
+			}
+			else
+			{
+				$query = sprintf("select id, name, description from ". self::$db_name . ".clubs where id = '%s'", 
+										mysql_real_escape_string($club_id));
+
+				mysql_query("SET NAMES utf8");	
+	
+				$result = mysql_query($query);
+	
+				if(!$result)
+				{
+					die('Query error: ' . mysql_error());
+				}
+				else 
+				{
+					if($row = mysql_fetch_assoc($result))
+					{
+						$c = new Club($row['id'],
+									$row['name'], 
+									$row['description']);
+	
+					}
+				}
+	
+				mysql_free_result($result);
+			}
+	
+			mysql_close($link);
+	
+			return $c;
+		}
 	
 		public function get_publisher_clubs($user_id)
 		{
@@ -390,6 +473,168 @@
 			mysql_close($link);
 	
 			return $users;
+		}
+		
+		public function add_post($post_title, $post_text, $user_id)
+		{
+			$link = mysql_connect(self::$db_host, self::$db_login, self::$db_password);
+		
+			if(!$link)
+			{
+				die('Ошибка соединения: ' . mysql_error());
+			}
+			else
+			{
+				$query = sprintf("insert into ". self::$db_name . ".posts(user_id, club_id, title, text) 
+										values ('%s', NULL, '%s', '%s')",
+										mysql_real_escape_string($user_id),
+										mysql_real_escape_string($post_title),
+										mysql_real_escape_string($post_text));
+	
+				$result = mysql_query($query);
+	
+				if(!$result)
+				{
+					die('Query error: ' . mysql_error());
+				}
+				else 
+				{
+					$res = true;
+				}
+	
+				mysql_free_result($result);
+			}
+	
+			mysql_close($link);
+	
+			return $res;
+		}
+
+		public function get_post_by_id($post_id)
+		{
+			$link = mysql_connect(self::$db_host, self::$db_login, self::$db_password);
+		
+			if(!$link)
+			{
+				die('Ошибка соединения: ' . mysql_error());
+			}
+			else
+			{
+				$query = sprintf("select id, user_id, club_id, title, text from ". self::$db_name . ".posts 
+										where id = '%s'",
+										mysql_real_escape_string($post_id));
+	
+				$result = mysql_query($query);
+	
+				if(!$result)
+				{
+					die('Query error: ' . mysql_error());
+				}
+				else 
+				{
+					if($row = mysql_fetch_assoc($result))
+					{
+						$p = new Post($row['id'], 
+											$row['user_id'],
+											$row['club_id'],
+											$row['title'],
+											$row['text']);
+	
+					}
+				}
+	
+				mysql_free_result($result);
+			}
+	
+			mysql_close($link);
+	
+			return $p;
+		}		
+		
+		public function get_posts($user_id)
+		{
+			$link = mysql_connect(self::$db_host, self::$db_login, self::$db_password);
+		
+			if(!$link)
+			{
+				die('Ошибка соединения: ' . mysql_error());
+			}
+			else
+			{
+				$query = sprintf("select id, user_id, club_id, title, text from ". self::$db_name . ".posts 
+										where user_id in (select publisher_id from " . self::$db_name . ".user_subscriptions where subscriber_id = '%s') ",
+										mysql_real_escape_string($user_id));
+	
+				$result = mysql_query($query);
+	
+				if(!$result)
+				{
+					die('Query error: ' . mysql_error());
+				}
+				else 
+				{
+					while($row = mysql_fetch_assoc($result))
+					{
+						$p = new Post($row['id'], 
+											$row['user_id'],
+											$row['club_id'],
+											$row['title'],
+											$row['text']);
+									
+						$posts[] = $p;
+	
+					}
+				}
+	
+				mysql_free_result($result);
+			}
+	
+			mysql_close($link);
+	
+			return $posts;
+		}
+		
+		public function get_user_posts($user_id)
+		{
+			$link = mysql_connect(self::$db_host, self::$db_login, self::$db_password);
+		
+			if(!$link)
+			{
+				die('Ошибка соединения: ' . mysql_error());
+			}
+			else
+			{
+				$query = sprintf("select id, user_id, club_id, title, text from ". self::$db_name . ".posts 
+										where user_id = '%s' and club_id is null",
+										mysql_real_escape_string($user_id));
+	
+				$result = mysql_query($query);
+	
+				if(!$result)
+				{
+					die('Query error: ' . mysql_error());
+				}
+				else 
+				{
+					while($row = mysql_fetch_assoc($result))
+					{
+						$p = new Post($row['id'], 
+											$row['user_id'],
+											$row['club_id'],
+											$row['title'],
+											$row['text']);
+									
+						$posts[] = $p;
+	
+					}
+				}
+	
+				mysql_free_result($result);
+			}
+	
+			mysql_close($link);
+	
+			return $posts;
 		}
 	}
 ?>

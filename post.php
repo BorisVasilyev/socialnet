@@ -55,42 +55,24 @@
 
 			if(!isset($_GET['show']))
 			{
-				echo '<h3> Зарегистрированные пользователи: </h3>';			
-				
-				echo '<table>';		
-			
-				$users = DBManager::get_users();
-			
-				foreach($users as $i => $value)
-				{
-					echo '<tr><td> ' . ($i + 1) . '. </td><td><b><a href="users.php?show=' . $value->Id . '">' . $value->Full_name . '</a></b></td></tr>';
-					echo '<tr><td></td><td> Дата регистрации: ' . $value->Reg_date . ' </td></tr>';
-					echo '<tr><td></td><td> <a href = "users.php?subscribe=' . $value->Id . '"> Подписаться </a> </td></tr>';
-					echo '<tr><td></td><td><br></td></tr>';
-				}	
-				
-				echo '</table>';
-				
-				if (isset($add_err)) echo '<font color=#ff0000> Нет смысла подписываться на самого себя </font>'; 
+				echo '<h3> Не выбран пост для просмотра </h3>';
 			}
 			else 
 			{
-				$user_id = $_GET['show'];
+				$post_id = $_GET['show'];
+								
+				$post = DBManager::get_post_by_id($post_id);
 				
-				$user = DBManager::get_user_by_id($user_id);
-				
-				echo '<h3> Личный блог пользователя ' . $user->Full_name . '</h3>';
-				
-				$posts = DBManager::get_user_posts($user_id);
-				
-				foreach($posts as $i => $value)
+				if(isset($post))
 				{
-					echo '<a href="post.php?show=' . $value->Id . '"><b>' . $value->Title . '</b></a><br><br>';
+					echo '<h3>' . $post->Title . '</h3>';
 					
-					echo $value->Text;
+					echo $post->Text;
 					
-					echo '<br><br>';
+					echo
 				}
+				else 
+					echo '<font color=#ff0000> Поста с таким номером не существует </font>';
 			}
 			
 			echo '<form action = "main.php" method ="post"><input type="submit" name="logout" value="Выход"/></form>';
@@ -117,5 +99,3 @@
 	}
 
 ?>
-
-

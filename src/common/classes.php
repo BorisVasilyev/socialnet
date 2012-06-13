@@ -29,5 +29,23 @@
 			$this->Description = $description; 
 		}
 	}	
+	
+	class Post
+	{
+		public $Id;
+		public $User_id;
+		public $Club_id;
+		public $Title;
+		public $Text;
+		
+		function __construct($id, $user_id, $club_id, $title, $text)
+		{
+			$this->Id = $id;
+			$this->User_id = $user_id;
+			$this->Club_id = $club_id;
+			$this->Title = $title;
+			$this->Text = $text;
+		}
+	}	
 
 ?>

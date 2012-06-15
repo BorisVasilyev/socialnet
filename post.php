@@ -43,16 +43,16 @@
 			
 			echo '<div class="header"> 
 					<table cellpadding="10"><tr><td><img src="images/logo.png" alt="logo" ></td> <td> <h1> SocialNetwork </h1> </td> </tr></table> 
-				</div>';
+					</div>';
 				
 			echo '<div class="menu"> 
 					<a href="main.php" class="menu_text"> Лента </a> 
 					<a href="clubs.php" class="menu_text"> Клубы </a> 
 					<a href="users.php" class="menu_text"> Пользователи </a> 
 				</div>';
-
+	
 			echo '<div class="body">';
-
+	
 			if(!isset($_GET['show']))
 			{
 				echo '<h3> Не выбран пост для просмотра </h3>';
@@ -68,14 +68,31 @@
 					echo '<h3>' . $post->Title . '</h3>';
 					
 					echo $post->Text;
+
+					$user = DBManager::get_user_by_id($post->User_id);					
 					
-					echo
+					echo '<br><br><b> Написал <a href = "users.php?show=' . $user->Id . '">' . $user->Full_name . '</a>';
+					
+					if(isset($post->Club_id))
+					{
+						$club = DBManager::get_club_by_id($post->Id);
+						
+						echo 'в блог клуба ' . $club->Name;
+					}
+					else 
+					{
+						echo ' в личный блог';
+					}
+					
+					echo '<b><br>';
 				}
 				else 
+				{
 					echo '<font color=#ff0000> Поста с таким номером не существует </font>';
+				}
+
+				echo '<br><form action = "main.php" method ="post"><input type="submit" name="logout" value="Выход"/></form>';
 			}
-			
-			echo '<form action = "main.php" method ="post"><input type="submit" name="logout" value="Выход"/></form>';
 		}
 		else
 		{

@@ -12,6 +12,8 @@
     width: 70%;
     background: #ffffff;
     padding-left : 20px;
+    padding: 10px;
+    min-height: 700px;
     border: none;
     float: left;
     margin: 0 15% 0 15%;

@@ -2,7 +2,7 @@
 	if(isset($_POST['logout']))
 	{
 		setcookie("login", "", time() - 3600*24*30*12);
-      	setcookie("password", "", time() - 3600*24*30*12);
+      setcookie("password", "", time() - 3600*24*30*12);
 		header("Location: index.php");
 	}
 
@@ -17,14 +17,18 @@
 
 		if(DBManager::check_login($login, $password))
 		{
-			$subs_id = $_GET['subscribe'];
-			
-			if($subs_id != null)
+			if(isset($_POST['add_comment']))
 			{
-				$cur_user = DBManager::get_user($login);			
+				$text = $_POST['comment_text'];
 				
-				if($cur_user->Id != $subs_id)
-					DBManager::add_user_subscription($cur_user->Id, $subs_id);
+				if($text != '')
+				{
+					$cur_user = DBManager::get_user($login);			
+					
+					$post_id = $_GET['show'];
+					
+					DBManager::add_comment($post_id, $cur_user->Id, $text);
+				}
 				else 
 					$add_err = true;
 			}
@@ -82,13 +86,38 @@
 					else 
 					{
 						echo ' в личный блог';
+					}		
+					
+					echo '</b><br>';
+					
+					$comments = DBManager::get_comments_by_post($post->Id);
+					
+					if(isset($comments))
+					{			
+						echo '<br><b> Комментарии: </b>';
+						
+						foreach($comments as $i => $value)
+						{
+							$com_user = DBManager::get_user_by_id($value->User_id);
+							
+							echo '<br><a href = "users.php?show=' . $com_user->Id . '">' . $com_user->Full_name . ':</a>';
+							
+							echo '<br>' . $value->Text . '<br>';
+						}
 					}
 					
-					echo '<b><br>';
+					echo '<br><b> Новый комментарий: </b>';
+					echo '<form action="post.php?show=' . $post->Id . '" method="post">
+							<textarea name="comment_text" style="width:50%; height:30px%;" /></textarea>
+							<br><input type="submit" name="add_comment" value="Добавить комментарий"/>							
+							</form>';
+							
+					if(isset($add_err))
+						echo '<font color=#ff0000> Нужно ввести текст комментария </font>';
 				}
 				else 
 				{
-					echo '<font color=#ff0000> Поста с таким номером не существует </font>';
+					echo '<font color=#ff0000> Поста с таким номером не существует </font><br>';
 				}
 
 				echo '<br><form action = "main.php" method ="post"><input type="submit" name="logout" value="Выход"/></form>';

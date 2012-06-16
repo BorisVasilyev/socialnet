@@ -636,5 +636,125 @@
 	
 			return $posts;
 		}
+		
+		public function get_club_posts($club_id)
+		{
+			$link = mysql_connect(self::$db_host, self::$db_login, self::$db_password);
+		
+			if(!$link)
+			{
+				die('Ошибка соединения: ' . mysql_error());
+			}
+			else
+			{
+				$query = sprintf("select id, user_id, club_id, title, text from ". self::$db_name . ".posts 
+										where club_id = '%s'",
+										mysql_real_escape_string($user_id));
+	
+				$result = mysql_query($query);
+	
+				if(!$result)
+				{
+					die('Query error: ' . mysql_error());
+				}
+				else 
+				{
+					while($row = mysql_fetch_assoc($result))
+					{
+						$p = new Post($row['id'], 
+											$row['user_id'],
+											$row['club_id'],
+											$row['title'],
+											$row['text']);
+									
+						$posts[] = $p;
+	
+					}
+				}
+	
+				mysql_free_result($result);
+			}
+	
+			mysql_close($link);
+	
+			return $posts;
+		}
+		
+		public function get_comments_by_post($post_id)
+		{
+			$link = mysql_connect(self::$db_host, self::$db_login, self::$db_password);
+		
+			if(!$link)
+			{
+				die('Ошибка соединения: ' . mysql_error());
+			}
+			else
+			{
+				$query = sprintf("select id, post_id, user_id, text from ". self::$db_name . ".comments
+										where post_id = '%s'",
+										mysql_real_escape_string($post_id));
+	
+				$result = mysql_query($query);
+	
+				if(!$result)
+				{
+					die('Query error: ' . mysql_error());
+				}
+				else 
+				{
+					while($row = mysql_fetch_assoc($result))
+					{
+						$c = new Comment($row['id'], 
+									$row['post_id'], 
+									$row['user_id'],
+									$row['text']);
+									
+						$comments[] = $c;
+	
+					}
+				}
+	
+				mysql_free_result($result);
+			}
+	
+			mysql_close($link);
+	
+			return $comments;
+		}
+		
+		public function add_comment($post_id, $user_id, $text)
+		{
+			$link = mysql_connect(self::$db_host, self::$db_login, self::$db_password);	
+		
+			if(!$link)
+			{
+				die('Ошибка соединения: ' . mysql_error());
+			}
+			else
+			{
+				$query = sprintf("insert into ". self::$db_name . ".comments(post_id, user_id, text)
+										values('%s', '%s', '%s')",
+										mysql_real_escape_string($post_id),
+										mysql_real_escape_string($user_id),
+										mysql_real_escape_string($text));
+	
+				$result = mysql_query($query);
+	
+				if(!$result)
+				{
+					die('Query error: ' . mysql_error());
+				}
+				else 
+				{
+					$res = true;
+				}
+	
+				mysql_free_result($result);
+			}
+	
+			mysql_close($link);
+	
+			return $res;
+		}
 	}
 ?>

@@ -48,21 +48,50 @@
 				
 			echo '<div class="body">';
 
-			echo '<h3> Существующие клубы: </h3>';
-
-			echo '<table>';		
-		
-			$clubs = DBManager::get_clubs();
-		
-			foreach($clubs as $i => $value)
+			if(isset($_GET['show']))
 			{
-				echo '<tr><td> ' . ($i + 1) . '. </td><td><b> <a href = "clubs.php?show=' . $value->Id . '"> ' . $value->Name . '</a> </b></td></tr>';
-				echo '<tr><td></td><td> ' . $value->Description. ' </td></tr>';
-				echo '<tr><td></td><td> <a href = "clubs.php?subscribe=' . $value->Id . '"> Подписаться </a> </td></tr>';
-				echo '<tr><td></td><td><br></td></tr>';
-			}	
+				$club_id = $_GET['show'];
+				
+				$club = DBManager::get_club_by_id($club_id);
+				
+				echo '<h3>' . $club->Name . '</h3>';
+				
+				echo $club->Description . '<br>';
+				
+				$posts = DBManager::get_club_posts($club->Id);
+				
+				if(isset($posts))
+				{
+					echo '<h3> Посты в клубе: </h3>';
+					
+					foreach($posts as $i => $value)
+					{
+						echo '<a href="post.php?show=' . $value->Id . '"><b>' . $value->Title . '</b></a><br><br>';
+						
+						echo $value->Text;
+						
+						echo '<br><br>';
+					}
+				}
+			}
+			else
+			{
+				echo '<h3> Существующие клубы: </h3>';
+	
+				echo '<table>';		
 			
-			echo '</table>';
+				$clubs = DBManager::get_clubs();
+			
+				foreach($clubs as $i => $value)
+				{
+					echo '<tr><td> ' . ($i + 1) . '. </td><td><b> <a href = "clubs.php?show=' . $value->Id . '"> ' . $value->Name . '</a> </b></td></tr>';
+					echo '<tr><td></td><td> ' . $value->Description. ' </td></tr>';
+					echo '<tr><td></td><td> <a href = "clubs.php?subscribe=' . $value->Id . '"> Подписаться </a> </td></tr>';
+					echo '<tr><td></td><td><br></td></tr>';
+				}	
+				
+				echo '</table>';
+			}
 			
 			echo '<br><form action = "main.php" method ="post"><input type="submit" name="logout" value="Выход"/></form>';
 		}

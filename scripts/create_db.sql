@@ -26,9 +26,8 @@ create table comments
 (
 	id mediumint AUTO_INCREMENT,
 	post_id int,
-	user_login varchar(100),
+	user_id int,
 	text varchar(1000),
-	parent_id int,
 	primary key(id)
 ) CHARACTER SET = utf8;
 

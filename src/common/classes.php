@@ -47,5 +47,21 @@
 			$this->Text = $text;
 		}
 	}	
+	
+	class Comment
+	{
+		public $Id;
+		public $Post_id;
+		public $User_id;
+		public $Text;
+		
+		function __construct($id, $post_id, $user_id, $text)
+		{
+			$this->Id = $id;
+			$this->Post_id = $post_id;
+			$this->User_id = $user_id;
+			$this->Text = $text;
+		}
+	}
 
 ?>
